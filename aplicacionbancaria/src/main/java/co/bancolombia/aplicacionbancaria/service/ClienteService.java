@@ -2,13 +2,15 @@ package co.bancolombia.aplicacionbancaria.service;
 
 import co.bancolombia.aplicacionbancaria.exception.ClienteNoEncontradoException;
 import co.bancolombia.aplicacionbancaria.model.Cliente;
+import co.bancolombia.aplicacionbancaria.model.DTO.ClienteDTO;
 import co.bancolombia.aplicacionbancaria.repository.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
+
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ClienteService {
@@ -16,16 +18,22 @@ public class ClienteService {
     @Autowired
     private ClienteRepository clienteRepository;
 
-    public List<Cliente> getAllClientes() {
-        return clienteRepository.findAll();
+    @Autowired
+    private ClienteMapper clienteMapper;
+
+    public List<ClienteDTO> getAllClientes() {
+        List<Cliente> clientes = clienteRepository.findAll();
+        return clientes.stream().map(clienteMapper::toDTO).collect(Collectors.toList());
     }
 
-    public Cliente getClienteById(Long id) {
-        return clienteRepository.findById(id)
-                .orElseThrow(() -> new ClienteNoEncontradoException(id));
+    public ClienteDTO getClienteById(Long id) {
+        Cliente cliente = clienteRepository.findById(id).orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+        return clienteMapper.toDTO(cliente);
     }
 
-    public Cliente saveCliente(Cliente cliente) {
-        return clienteRepository.save(cliente);
+    public ClienteDTO saveCliente(ClienteDTO clienteDTO) {
+        Cliente cliente = clienteMapper.toEntity(clienteDTO);
+        Cliente savedCliente = clienteRepository.save(cliente);
+        return clienteMapper.toDTO(savedCliente);
     }
 }

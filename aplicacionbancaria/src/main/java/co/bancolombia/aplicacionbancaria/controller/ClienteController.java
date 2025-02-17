@@ -4,6 +4,7 @@ import co.bancolombia.aplicacionbancaria.model.Cliente;
 import co.bancolombia.aplicacionbancaria.model.DTO.ClienteDTO;
 import co.bancolombia.aplicacionbancaria.service.ClienteMapper;
 import co.bancolombia.aplicacionbancaria.service.ClienteService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,18 +21,16 @@ public class ClienteController {
     private ClienteMapper clienteMapper;
 
     @GetMapping
-    public List<Cliente> getAllClientes() {
+    public List<ClienteDTO> getAllClientes() {
         return clienteService.getAllClientes();
     }
-
     @GetMapping("/{id}")
     public ClienteDTO getClienteById(@PathVariable Long id) {
-        Cliente cliente = clienteService.getClienteById(id);
-        return clienteMapper.toDTO(cliente);
+        return clienteService.getClienteById(id);  // Ya retorna un ClienteDTO desde el servicio
     }
 
     @PostMapping
-    public Cliente createCliente(@RequestBody Cliente cliente) {
-        return clienteService.saveCliente(cliente);
+    public ClienteDTO createCliente(@Valid @RequestBody ClienteDTO clienteDTO) {
+        return clienteService.saveCliente(clienteDTO);  // Ahora el servicio maneja ClienteDTO
     }
 }

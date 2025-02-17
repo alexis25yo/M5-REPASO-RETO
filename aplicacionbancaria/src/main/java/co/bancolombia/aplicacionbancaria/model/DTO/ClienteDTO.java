@@ -1,14 +1,29 @@
 package co.bancolombia.aplicacionbancaria.model.DTO;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 import java.util.List;
 
 public class ClienteDTO {
     private Long id;
+
+    @NotBlank(message = "El nombre es obligatorio")
+    @Size(min = 3, max = 50, message = "El nombre debe tener entre 3 y 50 caracteres")
     private String nombre;
+
+    @NotBlank(message = "El email es obligatorio")
+    @Email(message = "Debe ser un email válido")
     private String email;
+
+    @NotBlank(message = "El teléfono es obligatorio")
     private String telefono;
+
+    @NotBlank(message = "La dirección es obligatoria")
     private String direccion;
-    private List<PrestamoDTO> prestamos; // No incluimos el objeto Cliente dentro de PrestamoDTO
+
+    private List<PrestamoDTO> prestamos;
 
     // Getters y setters
     public Long getId() { return id; }
